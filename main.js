@@ -315,8 +315,10 @@ function loadTemplate(src) {
 }
 
 function preloadTemplates() {
-  loadTemplate('assets/jinbang.png');
-  loadTemplate('assets/qiancheng.png');
+  // 预加载所有灵签模板，文件名 = 类型名.png
+  ['da-ji','shang-qian','jin-bang','wen-yun','zi-qi','wen-qu'].forEach(t => {
+    loadTemplate('assets/' + t + '.png');
+  });
 }
 
 // ===== Poster Generation =====
@@ -324,8 +326,7 @@ async function generatePoster() {
   const canvas = document.getElementById('posterCanvas');
   if (!canvas || !userData || !currentFortune) return;
 
-  const isJinBang = currentFortune.cls === 'jin-bang';
-  const src = 'assets/' + (isJinBang ? 'jinbang' : 'qiancheng') + '.png';
+  const src = 'assets/' + currentFortune.cls + '.png';
 
   const img = await loadTemplate(src);
   if (!img) { showToast('模板加载失败，请重试'); return; }
@@ -360,13 +361,17 @@ async function generatePoster() {
   ctx.shadowColor = 'rgba(255,255,255,0.15)';
   ctx.shadowBlur = 6;
 
-  if (isJinBang) {
-    // 第一张（金榜题名）: X 120-220, Y 320-370
-    ctx.fillText(name, 170, 345);
-  } else {
-    // 第二张（前程似锦）: X 380-500, Y 280-340
-    ctx.fillText(name, 440, 310);
-  }
+  // 各灵签模板的姓名位置（图片左上角为原点）
+  const namePos = {
+    'da-ji':      { x: 170, y: 345 },
+    'shang-qian': { x: 170, y: 345 },
+    'jin-bang':   { x: 170, y: 345 },
+    'wen-yun':    { x: 170, y: 345 },
+    'zi-qi':      { x: 170, y: 345 },
+    'wen-qu':     { x: 170, y: 345 },
+  };
+  const pos = namePos[currentFortune.cls] || { x: W/2, y: H/2 };
+  ctx.fillText(name, pos.x, pos.y);
 
   ctx.shadowBlur = 0;
 
