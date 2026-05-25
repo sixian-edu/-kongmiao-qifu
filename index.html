@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>孔庙祈福 · 中高考上岸祈愿</title>
+<meta name="description" content="2026全国中高考线上祈福活动 · 文运昌隆 · 金榜题名">
+<meta property="og:title" content="孔庙祈福 · 金榜题名">
+<meta property="og:description" content="2026中高考线上祈福，点亮文曲灯，抽幸运签">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== Loading ===== -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-scroll">
+    <div class="loading-scroll-rod top"></div>
+    <div class="loading-scroll-body">
+      <div class="loading-scroll-inner"></div>
+    </div>
+    <div class="loading-scroll-rod bot"></div>
+  </div>
+  <div class="loading-text">文运昌隆 · 金榜题名</div>
+</div>
+
+<!-- ===== Floating Elements ===== -->
+<canvas id="particleCanvas"></canvas>
+<div class="petal-container" id="petalContainer"></div>
+
+<!-- ===== Audio Toggle ===== -->
+<button class="audio-toggle" id="audioToggle" onclick="toggleAudio()">🔇</button>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+
+  <!-- Temple silhouette -->
+  <div class="hero-temple">
+    <svg viewBox="0 0 414 350" xmlns="http://www.w3.org/2000/svg">
+      <!-- Night sky -->
+      <rect width="414" height="350" fill="#0D0505" opacity="0.6"/>
+      <!-- Moon -->
+      <circle cx="340" cy="60" r="28" fill="#D4A847" opacity="0.12"/>
+      <circle cx="340" cy="60" r="22" fill="#D4A847" opacity="0.06"/>
+      <!-- Mountain silhouette -->
+      <path d="M0 280 Q60 200 120 250 T200 220 T280 240 T350 210 T414 230 L414 350 L0 350Z"
+        fill="#1A0808" opacity="0.8"/>
+      <path d="M0 300 Q80 250 150 280 T250 260 T340 250 T414 270 L414 350 L0 350Z"
+        fill="#0D0505"/>
+      <!-- Temple roof -->
+      <path d="M120 260 Q207 180 294 260 L290 264 Q207 188 124 264Z"
+        fill="#2A1010"/>
+      <path d="M140 270 Q207 200 274 270 L270 274 Q207 208 144 274Z"
+        fill="#C41E3A22"/>
+      <!-- Temple pillars -->
+      <rect x="190" y="260" width="8" height="60" fill="#1A0808"/>
+      <rect x="216" y="260" width="8" height="60" fill="#1A0808"/>
+      <!-- Gate -->
+      <rect x="188" y="280" width="38" height="40" fill="#1A0808" rx="4"/>
+      <rect x="195" y="295" width="24" height="25" fill="#2A1010" rx="2"/>
+      <!-- Steps -->
+      <rect x="175" y="318" width="64" height="4" fill="#1A0808" rx="1"/>
+      <rect x="180" y="322" width="54" height="4" fill="#0D0505" rx="1"/>
+      <rect x="185" y="326" width="44" height="4" fill="#0D0505" rx="1"/>
+      <!-- Small temple roof decorations -->
+      <circle cx="207" cy="198" r="3" fill="#D4A847" opacity="0.15"/>
+      <!-- Flying birds -->
+      <path d="M50 100 Q55 94 60 100" stroke="#2A1010" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M70 90 Q75 84 80 90" stroke="#2A1010" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M310 80 Q315 74 320 80" stroke="#2A1010" stroke-width="1" fill="none" opacity="0.2"/>
+    </svg>
+  </div>
+
+  <!-- Lanterns -->
+  <div class="lantern-wrap">
+    <div class="lantern-glow"></div>
+    <div class="lantern-body"></div>
+  </div>
+  <div class="lantern-wrap" style="top:12%;right:auto;left:8%;animation-delay:-2s">
+    <div class="lantern-glow"></div>
+    <div class="lantern-body"></div>
+  </div>
+
+  <!-- Clouds -->
+  <div class="cloud" style="top:15%;width:260px;animation-duration:25s"></div>
+  <div class="cloud" style="top:35%;width:180px;animation-duration:30s;animation-delay:-10s"></div>
+
+  <!-- Content -->
+  <div class="hero-content" style="opacity:0;animation:fadeInUp 1.2s ease forwards .5s">
+    <style>@keyframes fadeInUp{to{opacity:1;transform:translateY(0)}}.hero-content{transform:translateY(30px)}</style>
+    <div class="hero-badge">🙏 2026 金榜祈福</div>
+    <h1 class="hero-title">文运昌隆<br>金榜题名</h1>
+    <p class="hero-sub">2026 全国中高考线上祈福活动</p>
+    <p class="hero-date">孔子故里 · 曲阜孔庙</p>
+    <div class="hero-btns">
+      <button class="btn-glow" onclick="scrollToForm()"><span>🙏 为自己祈福</span></button>
+      <button class="btn-ghost" onclick="scrollToFormOther()">🎐 为亲友祈福</button>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>向下祈福</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- ===== Form ===== -->
+<section class="section" id="formSection" style="display:none">
+  <div class="section-inner">
+    <div class="section-title">写祈福语</div>
+    <p class="section-subtitle">写下你的心愿，文曲星自会听见</p>
+    <div class="form-card">
+      <div class="form-group">
+        <label>你的名字</label>
+        <input type="text" id="prayerName" placeholder="输入你的名字（可匿名）" maxlength="20">
+      </div>
+      <div class="form-group">
+        <label>考试类型</label>
+        <select id="examType">
+          <option value="gaokao">高 考</option>
+          <option value="zhongkao">中 考</option>
+          <option value="jiaozi">教 资</option>
+          <option value="kaoyan">考 研</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>愿望寄语</label>
+        <textarea id="prayerWish" placeholder="写下你的心愿…（如：金榜题名，前程似锦）" maxlength="50"></textarea>
+      </div>
+      <button class="btn-submit" onclick="submitPrayer()">🌟 点亮文曲灯</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Ceremony Overlay ===== -->
+<div class="ceremony-overlay" id="ceremonyOverlay">
+  <div class="ceremony-content">
+    <div class="ceremony-lamp">
+      <div class="lantern-glow"></div>
+      <div class="lantern-body"></div>
+    </div>
+    <div class="ceremony-text">文曲星耀 · 福运亨通</div>
+    <div class="ceremony-sub">正在点亮你的祈福灯…</div>
+  </div>
+</div>
+
+<!-- ===== Fortune Section ===== -->
+<section class="section section-inner" id="prayerSection" style="display:none">
+  <div class="section-title">祈愿灵签</div>
+  <p class="section-subtitle">文曲星为你降下吉签</p>
+
+  <div class="slip-section">
+    <div class="slip-card" id="slipCard"></div>
+    <button class="slip-btn" onclick="drawFortuneAgain()" style="margin-top:24px">🪷 再求一签</button>
+  </div>
+</section>
+
+<!-- ===== Poster Section ===== -->
+<section class="section section-inner" id="posterSection" style="display:none">
+  <div class="section-title">祈福海报</div>
+  <p class="section-subtitle">长按保存，分享好友</p>
+
+  <div class="poster-section">
+    <div class="poster-preview">
+      <canvas id="posterCanvas" width="1080" height="1920"></canvas>
+    </div>
+
+    <div class="share-msg">
+      🎋 邀请好友一起祈福，可解锁【状元签】<br>
+      分享给正在备考的朋友吧
+    </div>
+
+    <div class="share-btns">
+      <button class="btn-glow" onclick="sharePoster()"><span>📤 分享海报</span></button>
+      <button class="btn-ghost" onclick="savePosterImg()">💾 保存图片</button>
+    </div>
+    <button class="slip-btn" onclick="drawFortuneAgain()" style="margin-top:20px">🪷 再抽一次</button>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <p class="footer-text">
+    心诚则灵 · 祈愿皆如愿<br>
+    <span class="brand">思贤学习站 · 中高考助力计划</span>
+  </p>
+  <p class="footer-text" style="margin-top:12px;color:#1A0808">
+    山东省济南市商河县 · 155-6412-8008
+  </p>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
