@@ -308,7 +308,6 @@ function loadTemplate(src) {
   return new Promise((resolve) => {
     if (templateCache[src]) { resolve(templateCache[src]); return; }
     const img = new Image();
-    img.crossOrigin = 'anonymous';
     img.onload = () => { templateCache[src] = img; resolve(img); };
     img.onerror = () => resolve(null);
     img.src = src;
@@ -316,8 +315,8 @@ function loadTemplate(src) {
 }
 
 function preloadTemplates() {
-  loadTemplate('assets/微信图片_20260526012307.png');
-  loadTemplate('assets/微信图片_20260526012314.png');
+  loadTemplate('assets/jinbang.png');
+  loadTemplate('assets/qiancheng.png');
 }
 
 // ===== Poster Generation =====
@@ -326,7 +325,7 @@ async function generatePoster() {
   if (!canvas || !userData || !currentFortune) return;
 
   const isJinBang = currentFortune.cls === 'jin-bang';
-  const src = 'assets/微信图片_2026052601230' + (isJinBang ? '7' : '4') + '.png';
+  const src = 'assets/' + (isJinBang ? 'jinbang' : 'qiancheng') + '.png';
 
   const img = await loadTemplate(src);
   if (!img) { showToast('模板加载失败，请重试'); return; }
