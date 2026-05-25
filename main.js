@@ -337,43 +337,7 @@ async function generatePoster() {
   canvas.width = W * dpr; canvas.height = H * dpr;
   ctx.scale(dpr, dpr);
 
-  // Draw template
-  ctx.drawImage(img, 0, 0, W, H);
-
-  // Overlay name
-  const name = userData.name || '善信';
-  const nameLen = name.length;
-
-  // Adaptive font size based on name length
-  let fontSize = 30;
-  if (nameLen <= 2) fontSize = 34;
-  else if (nameLen <= 4) fontSize = 30;
-  else if (nameLen <= 6) fontSize = 26;
-  else if (nameLen <= 10) fontSize = 20;
-  else fontSize = 16;
-
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#2A1A0A';
-  ctx.font = 'bold ' + fontSize + 'px "Noto Serif SC","SimSun","STSong",serif';
-
-  // Text shadow for readability
-  ctx.shadowColor = 'rgba(255,255,255,0.15)';
-  ctx.shadowBlur = 6;
-
-  // 各灵签模板的姓名位置（图片左上角为原点）
-  const namePos = {
-    'da-ji':      { x: 170, y: 345 },
-    'shang-qian': { x: 170, y: 345 },
-    'jin-bang':   { x: 170, y: 345 },
-    'wen-yun':    { x: 170, y: 345 },
-    'zi-qi':      { x: 170, y: 345 },
-    'wen-qu':     { x: 170, y: 345 },
-  };
-  const pos = namePos[currentFortune.cls] || { x: W/2, y: H/2 };
-  ctx.fillText(name, pos.x, pos.y);
-
-  ctx.shadowBlur = 0;
+    ctx.drawImage(img, 0, 0, W, H);
 
   document.getElementById('posterSection').style.display = 'block';
   document.getElementById('posterSection').classList.add('visible');
