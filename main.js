@@ -44,6 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 自动播放背景音乐
     startMusic();
     document.getElementById('audioToggle').textContent = '🎵';
+    // 状元签解锁状态
+    if (localStorage.getItem('zy_unlocked')) {
+      const btn = document.getElementById('unlockBtn');
+      if (btn) { btn.textContent = '✅ 状元签已解锁'; btn.disabled = true; }
+    }
   }, 2500);
   // 首次点击页面时确保音频已启动（绕过浏览器自动播放限制）
   document.addEventListener('click', () => {
@@ -353,8 +358,7 @@ function sharePoster() {
     if (navigator.share && navigator.canShare && navigator.canShare({ files:[file] })) {
       try {
         await navigator.share({ files:[file], title:'孔庙祈福', text:'来为我祈福吧！' });
-        localStorage.setItem('zy_unlocked', 'true');
-        showToast('分享成功！解锁状元签 🎉');
+        showToast('分享成功！记得点击"我已分享"解锁状元签 🎉');
         return;
       } catch(e) {}
     }
@@ -369,6 +373,18 @@ function sharePoster() {
       savePosterImg();
     }
   });
+}
+
+// ===== Unlock 状元签 =====
+function unlockZhuangyuan() {
+  if (localStorage.getItem('zy_unlocked')) {
+    showToast('状元签已解锁，快去抽签吧！');
+    return;
+  }
+  localStorage.setItem('zy_unlocked', 'true');
+  document.getElementById('unlockBtn').textContent = '✅ 状元签已解锁';
+  document.getElementById('unlockBtn').disabled = true;
+  showToast('🎉 状元签已解锁！下次抽签有机会抽到');
 }
 
 // ===== Toast =====

@@ -263,6 +263,8 @@ body {
   transition:all .3s; font-family:inherit; margin-bottom:30px;
 }
 .slip-btn:hover { background:linear-gradient(135deg, #D4A84722, #C41E3A22); box-shadow:0 0 40px #D4A84722; }
+.slip-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+.slip-btn:disabled:hover { background:linear-gradient(135deg, #D4A84711, #C41E3A11); box-shadow:none; }
 .slip-card {
   display:none; max-width:360px; margin:0 auto;
   background: linear-gradient(135deg, #1A0808, #2A1010);
