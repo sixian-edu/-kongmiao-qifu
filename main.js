@@ -19,6 +19,13 @@ const FORTUNES = [
   { type:'金榜题名', cls:'jin-bang', label:'金榜题名', poem:'大鹏一日同风起，扶摇直上九万里。', desc:'一飞冲天，势不可挡。你的才华终将闪耀。' },
 ];
 
+// 状元签（分享后解锁）
+const ZHUANGYUAN = { type:'状元签', cls:'zhuang-yuan', label:'状元签', poem:'春风得意占鳌头，金榜题名天下知。', desc:'独占鳌头，天下皆知。你是天选之子，此战必夺魁首，荣登状元之位。' };
+
+function getAvailableFortunes() {
+  return localStorage.getItem('zy_unlocked') ? [...FORTUNES, ZHUANGYUAN] : FORTUNES;
+}
+
 // ===== State =====
 let userData = null;
 let currentFortune = null;
@@ -213,7 +220,8 @@ function showCeremony() {
 
 // ===== Fortune =====
 function drawFortune() {
-  currentFortune = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
+  const pool = getAvailableFortunes();
+  currentFortune = pool[Math.floor(Math.random() * pool.length)];
   const card = document.getElementById('slipCard');
   card.className = 'slip-card';
   card.innerHTML = `
@@ -231,7 +239,8 @@ function drawFortune() {
 }
 
 function drawFortuneAgain() {
-  currentFortune = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
+  const pool = getAvailableFortunes();
+  currentFortune = pool[Math.floor(Math.random() * pool.length)];
   const card = document.getElementById('slipCard');
   card.className = 'slip-card';
   card.innerHTML = `
@@ -293,7 +302,7 @@ function loadTemplate(src) {
 
 function preloadTemplates() {
   // 预加载所有灵签模板，文件名 = 类型名.png
-  ['da-ji','shang-qian','jin-bang','wen-yun','zi-qi','wen-qu'].forEach(t => {
+  ['da-ji','shang-qian','jin-bang','wen-yun','zi-qi','wen-qu','zhuang-yuan'].forEach(t => {
     loadTemplate('assets/' + t + '.png');
   });
 }
@@ -344,6 +353,7 @@ function sharePoster() {
     if (navigator.share && navigator.canShare && navigator.canShare({ files:[file] })) {
       try {
         await navigator.share({ files:[file], title:'孔庙祈福', text:'来为我祈福吧！' });
+        localStorage.setItem('zy_unlocked', 'true');
         showToast('分享成功！解锁状元签 🎉');
         return;
       } catch(e) {}
