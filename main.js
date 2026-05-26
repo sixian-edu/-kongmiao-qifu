@@ -34,7 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initPetals();
     initScrollAnim();
     preloadTemplates();
+    // 自动播放背景音乐
+    startMusic();
+    document.getElementById('audioToggle').textContent = '🎵';
   }, 2500);
+  // 首次点击页面时确保音频已启动（绕过浏览器自动播放限制）
+  document.addEventListener('click', () => {
+    if (!isMusicPlaying) {
+      startMusic();
+      document.getElementById('audioToggle').textContent = '🎵';
+    }
+  }, { once: true });
 });
 
 // ===== Particle System =====
@@ -119,72 +129,39 @@ function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
+// 随机钟声
+const BELL_SOURCES = [];
+for (let i = 1; i <= 5; i++) {
+  const a = new Audio('assets/bells/' + i + '.mp3');
+  a.volume = 1.0;
+  BELL_SOURCES.push(a);
+}
+
 function playBell() {
   try {
-    initAudio();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.connect(g); g.connect(audioCtx.destination);
-    o.type = 'sine';
-    o.frequency.setValueAtTime(880, audioCtx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 1.5);
-    g.gain.setValueAtTime(0.08, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
-    o.start(); o.stop(audioCtx.currentTime + 1.5);
+    const idx = Math.floor(Math.random() * BELL_SOURCES.length);
+    const clone = BELL_SOURCES[idx].cloneNode();
+    clone.volume = 1.0;
+    clone.play().catch(() => {});
   } catch(e) {}
 }
 
-function playChime(freq, delay) {
-  try {
-    initAudio();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.connect(g); g.connect(audioCtx.destination);
-    o.type = 'sine';
-    o.frequency.value = freq;
-    g.gain.setValueAtTime(0.04, audioCtx.currentTime + delay);
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + 0.6);
-    o.start(audioCtx.currentTime + delay);
-    o.stop(audioCtx.currentTime + delay + 0.6);
-  } catch(e) {}
-}
 
-function playFanfare() {
-  playChime(523, 0); playChime(659, 0.15);
-  playChime(784, 0.3); playChime(1047, 0.5);
-}
+// Background music - MP3 loop
+const bgmAudio = new Audio('assets/bgm.mp3');
+bgmAudio.loop = true;
+bgmAudio.volume = 0.3;
 
-// Background music - pentatonic melody loop
-const PENTATONIC = [262, 294, 330, 392, 440, 392, 330, 294]; // Do Re Mi Sol La Sol Mi Re
 function startMusic() {
   if (isMusicPlaying) return;
   isMusicPlaying = true;
-  let i = 0;
-  function playNote() {
-    if (!isMusicPlaying) return;
-    try {
-      initAudio();
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.connect(g); g.connect(audioCtx.destination);
-      o.type = 'sine';
-      o.frequency.value = PENTATONIC[i % PENTATONIC.length];
-      g.gain.setValueAtTime(0.015, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-      o.start(); o.stop(audioCtx.currentTime + 0.5);
-      i++;
-    } catch(e) {}
-  }
-  playNote();
-  musicInterval = setInterval(() => {
-    if (document.hidden) return;
-    playNote();
-  }, 500);
+  bgmAudio.play().catch(() => { isMusicPlaying = false; });
 }
 
 function stopMusic() {
   isMusicPlaying = false;
-  if (musicInterval) { clearInterval(musicInterval); musicInterval = null; }
+  bgmAudio.pause();
+  bgmAudio.currentTime = 0;
 }
 
 function toggleAudio() {
@@ -217,7 +194,7 @@ function showCeremony() {
     // Particle burst
     burstParticles('#D4A847', 30);
     burstParticles('#C41E3A', 20);
-    playFanfare();
+    playBell();
   }, 800);
 
   // After ceremony, show slip
@@ -246,7 +223,7 @@ function drawFortune() {
     <div class="slip-seal">${currentFortune.label === '大吉' ? '大吉' : '文昌'}</div>
   `;
   setTimeout(() => card.classList.add('visible'), 100);
-  playFanfare();
+  playBell();
   burstParticles('#D4A847', 40);
   burstParticles('#F0D68A', 30);
   // Update poster section
@@ -267,7 +244,7 @@ function drawFortuneAgain() {
     card.classList.add('visible');
     card.scrollIntoView({ behavior:'smooth', block:'center' });
   }, 100);
-  playFanfare();
+  playBell();
   burstParticles('#D4A847', 25);
   setTimeout(generatePoster, 500);
 }
